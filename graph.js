@@ -42,7 +42,7 @@ function plotTrend(data) {
 
     var cities = color.domain().map(function(name, i) {
         var yearCount = 1509;
-        var yearGroupSize = 10;
+        var yearGroupSize = 1;
         // console.log("hard");
         console.log(name + ";" + i);
         return {
