@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite errors="0" failures="0" hostname="Lau-Chun-Yin-Vincents-MacBook-Air.local" name="hku.project.NgramRunnerTest" tests="1" time="0.094" timestamp="2013-04-27T07:57:20">
+  <properties />
+  <testcase classname="hku.project.NgramRunnerTest" name="test" time="0.011" />
+  <system-out><![CDATA[reading filter input
+finish reading filter input
+{Mary=true, John=true}
+]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

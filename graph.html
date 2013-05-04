@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<title>Graph</title>
+		<link rel="stylesheet" href="css/style.css">
+		<link rel="stylesheet" href="css/svg.css">
+		<style>
+
+body {
+  font: 10px sans-serif;
+}
+
+.axis path,
+.axis line {
+  fill: none;
+  stroke: #000;
+  shape-rendering: crispEdges;
+}
+
+.x.axis path {
+  display: none;
+}
+
+.line {
+  fill: none;
+  stroke: steelblue;
+  stroke-width: 1.5px;
+}
+
+</style>
+	</head>
+	<body>
+		<div id="wrapper">
+			<div id="chart"></div>
+
+			<div id="title">
+				<h1>NGram analysis</h1>
+			</div>
+
+			<div id="about">
+				<!-- <h4>About</h4> -->
+				<p>
+					<strong>Chinese N Gram Analysis</strong>
+				</p>
+				<div class="fb-like" data-href="http://prcweb.co.uk/lab/what-makes-us-happy" data-send="false" data-layout="button_count" data-width="150" data-show-faces="false"></div>
+			</div>
+		</div>
+
+		<div id="menu">
+			<!-- 				<h2>&uarr; Y axis</h2>
+			<ul id="y-axis-menu"></ul>
+			<h2>&rarr; X axis</h2>
+			-->
+			<ul id="x-axis-menu"></ul>
+		</div>
+		<p>
+			Graph for words with High R
+		</p>
+		<div id="word_graph"></div>
+		<div id="count_graph" style="display: block;margin-left: auto;  margin-right: auto;" ></div>
+		<script src="http://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.4.4/underscore-min.js"></script>
+		<script src="http://cdnjs.cloudflare.com/ajax/libs/d3/3.0.8/d3.js"></script>
+		<script src="https://raw.github.com/jasondavies/d3-cloud/master/d3.layout.cloud.js"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.0.0/jquery.min.js"></script>
+		<script src="graph.js"></script>
+		<script>
+            $(document).ready(function() {
+                // d3.tsv("2gram_result.txt", function(unparsedData) {
+                // var data = d3.tsv.parseRows(unparsedData);
+                // // _.reduce(data,function(meom, val){
+                // // console.log(val);
+                // // })
+                // });
+                var wordsInput = [];
+
+                function plotWords(wordsInput) {
+                    console.log("input" + wordsInput);
+                    function draw(words) {
+                        console.log("log");
+                        console.log(d3.select("body").select("word_graph"));
+                        d3.select("body").select("#word_graph").append("svg").attr("width", 300).attr("height", 300).append("g").attr("transform", "translate(150,150)").selectAll("text").data(words).enter().append("text").style("font-size", function(d) {
+                            return d.size + "px";
+                        }).style("font-family", "Impact").style("fill", function(d, i) {
+                            return fill(i);
+                        }).attr("text-anchor", "middle").attr("transform", function(d) {
+                            return "translate(" + [d.x, d.y] + ")rotate(" + d.rotate + ")";
+                        }).text(function(d) {
+                            return d.text;
+                        });
+                    }
+
+                    var fill = d3.scale.category20();
+                    console.log(wordsInput);
+                    d3.layout.cloud().size([300, 300]).words(wordsInput.map(function(d) {
+                        return {
+                            text : d,
+                            size : 10 + Math.random() * 90
+                        };
+                    })).rotate(function() {
+                        return ~~(Math.random() * 2) * 90;
+                    }).font("Impact").fontSize(function(d) {
+                        return d.size;
+                    }).on("end", draw).start();
+                }
+
+                var input = ['highlight.txt', "2gram_result.txt"];
+                _.each(input, function(file) {
+                    d3.text(file, "text/tsv", f_csv);
+                    function f_csv(csv) {
+                        var rows = d3.tsv.parseRows(csv);
+                        var finalArray = [];
+                        wordsInput = _.reduce(rows, function(memo, val) {
+                            memo.push(val[0])
+                            return memo;
+                        }, finalArray)
+                        plotWords(wordsInput);
+                    }
+
+                })
+            });
+
+		</script>
+	</body>
+</html>
