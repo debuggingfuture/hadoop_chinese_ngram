@@ -22,29 +22,19 @@ var line = d3.svg.line().interpolate("basis").x(function(d) {
     return y(d.temperature);
 });
 
-var svg = d3.select("body").select("#count_graph").append("svg").attr("width", width + margin.left + margin.right).attr("height", height + margin.top + margin.bottom).append("g").attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
-d3.text("highlight.txt", "text/tsv", f_csv);
-function f_csv(tsv) {
-    var rows = d3.tsv.parseRows(tsv);
-
-    plotTrend(rows);
-
-}
-
-function plotTrend(data) {
-
+function plotTrend(data,file,size) {
+var svg = d3.select("body").select("#count_graph-"+file).append("svg").attr("width", width + margin.left + margin.right).attr("height", height + margin.top + margin.bottom).append("g").attr("transform", "translate(" + margin.left + "," + margin.top + ")");
     var wordNames = data.map(function(d) {
-        return d[0]
+        return d[0];
     });
 
     color.domain(wordNames);
 
     var cities = color.domain().map(function(name, i) {
         var yearCount = 1509;
-        var yearGroupSize = 1;
+        var yearGroupSize = size;
         // console.log("hard");
-        console.log(name + ";" + i);
         return {
             name : name,
             values : _.map(data[i][2].split(","), function(percent) {
@@ -53,7 +43,7 @@ function plotTrend(data) {
                     date : yearCount,
                     temperature : parseFloat(percent)
                 }
-                console.log(output);
+                // console.log(output);
                 return output;
                 // });
                 // console.log(output);
@@ -84,7 +74,7 @@ function plotTrend(data) {
     // return d[0];
     // }));
     x.domain(d3.extent([1510, 2009]));
-    y.domain(d3.extent([0.0000, 0.0001]));
+    y.domain(d3.extent([0.0000, 0.0025]));
     //
     // y.domain([d3.min(cities, function(c) {
     // return d3.min(c.values, function(v) {

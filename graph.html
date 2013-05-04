@@ -4,31 +4,29 @@
 	<head>
 		<meta charset="utf-8">
 		<title>Graph</title>
-<!-- 		<link rel="stylesheet" href="css/style.css">
+		<!-- 		<link rel="stylesheet" href="css/style.css">
 		<link rel="stylesheet" href="css/svg.css"> -->
 		<style>
+			body {
+				font: 10px sans-serif;
+			}
 
-/*body {
-  font: 10px sans-serif;
-}
+			.axis path, .axis line {
+				fill: none;
+				stroke: #FFFFFF;
+				shape-rendering: crispEdges;
+			}
 
-.axis path,
-.axis line {
-  fill: none;
-  stroke: #000;
-  shape-rendering: crispEdges;
-}
+			.x.axis path {
+				display: none;
+			}
 
-.x.axis path {
-  display: none;
-}
-
-.line {
-  fill: none;
-  stroke: steelblue;
-  stroke-width: 1.5px;
-}*/
-</style>
+			.line {
+				fill: none;
+				stroke: steelblue;
+				stroke-width: 1.5px;
+			}
+		</style>
 	</head>
 	<body>
 		<div id="wrapper">
@@ -57,7 +55,10 @@
 		<p>
 			Graph for words with High R
 		</p>
-		<div id="word_graph"></div>
+		<div id="word_graph-highlight"></div>
+		<div id="count_graph-highlight"></div>
+		<div id="word_graph-2gram_result"></div>
+		<div id="count_graph-2gram_result"></div>
 		<div id="count_graph" style="display: block;margin-left: auto;  margin-right: auto;" ></div>
 		<script src="http://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.4.4/underscore-min.js"></script>
 		<script src="http://cdnjs.cloudflare.com/ajax/libs/d3/3.0.8/d3.js"></script>
@@ -74,12 +75,12 @@
                 // });
                 var wordsInput = [];
 
-                function plotWords(wordsInput) {
+                function plotWords(wordsInput, file) {
                     console.log("input" + wordsInput);
                     function draw(words) {
                         console.log("log");
                         console.log(d3.select("body").select("word_graph"));
-                        d3.select("body").select("#word_graph").append("svg").attr("width", 300).attr("height", 300).append("g").attr("transform", "translate(150,150)").selectAll("text").data(words).enter().append("text").style("font-size", function(d) {
+                        d3.select("body").select("#word_graph" + "-" + file).append("svg").attr("width", 300).attr("height", 300).append("g").attr("transform", "translate(150,150)").selectAll("text").data(words).enter().append("text").style("font-size", function(d) {
                             return d.size + "px";
                         }).style("font-family", "Impact").style("fill", function(d, i) {
                             return fill(i);
@@ -104,9 +105,10 @@
                     }).on("end", draw).start();
                 }
 
-                var input = ['highlight.txt', "2gram_result.txt"];
-                _.each(input, function(file) {
-                    d3.text(file, "text/tsv", f_csv);
+                var input=[{file:'highlight.txt', year:1},{file:"2gram_result.txt",year:10}]
+                // var input = ['highlight.txt'];
+                _.each(input, function(inputParam) {
+                    d3.text(inputParam.file, "text/tsv", f_csv);
                     function f_csv(csv) {
                         var rows = d3.tsv.parseRows(csv);
                         var finalArray = [];
@@ -114,7 +116,10 @@
                             memo.push(val[0])
                             return memo;
                         }, finalArray)
-                        plotWords(wordsInput);
+                        var file = inputParam.file.replace('\.txt', '');
+                        console.log("file:" + file);
+                        plotWords(wordsInput, file);
+                        plotTrend(rows, file,inputParam.year);
                     }
 
                 })
